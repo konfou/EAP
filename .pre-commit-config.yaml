@@ -1,0 +1,19 @@
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.14.11
+  hooks:
+    # Run the linter.
+    - id: ruff-check
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
+- repo: local
+  # No official `pre-commit` hook is currently provided.
+  # Ref: https://github.com/astral-sh/ty/issues/269
+  hooks:
+    - id: ty
+      name: ty check
+      entry: ty check .
+      language: python
+      types_or: [python, pyi, jupyter]
