@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: risk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg://app:app@localhost:5432/risk
+      TEST_DATABASE_URL: postgresql+psycopg://app:app@localhost:5432/risk
+      DOCKER_BUILDKIT: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH
+
+      - name: Build Docker images
+        run: |
+          docker build -t eap-api -f Dockerfile .
+          docker build -t eap-dashboard -f Dockerfile.dashboard .
+          docker build -t eap-scheduler -f Dockerfile.scheduler .
+
+      - name: Initialize DB schema
+        run: |
+          psql postgresql://app:app@localhost:5432/risk -f sql/001_init.sql
+
+      - name: Run tests
+        run: pytest -v
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ty type check
+        run: ty check
