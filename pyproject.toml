@@ -1,0 +1,90 @@
+[project]
+name = "enterprise-analytics-platform"
+version = "0.1.0"
+authors = [{ name = "konfou", email = "mail@konfou.xyz" }]
+description = "Enterprise risk, anomaly, and data quality analytics platform."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+  # API
+  "fastapi",
+  "uvicorn[standard]",
+  # Observability
+  "prometheus-client",
+  # Dashboard
+  "dash",
+  # Scheduling
+  "apscheduler",
+  # Database
+  "sqlalchemy",
+  "psycopg[binary]",
+  # Data validation & settings
+  "pydantic",
+  "pydantic-settings",
+  # Numerics & utilities
+  "numpy",
+  "python-dateutil",
+  # Logging (stdlib-compatible)
+  "structlog",
+]
+
+[project.optional-dependencies]
+dev = [
+  # Testing
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "httpx",
+  # Formatting & linting
+  "ruff",
+  "ty",
+  "taplo",
+  # Dependencies
+  "pip-tools",
+  # Local dev quality
+  "pre-commit",
+  "ipython",
+]
+
+[project.urls]
+Homepage = "https://github.com/konfou/EAP"
+Issues = "https://github.com/konfou/EAP/issues"
+
+[project.scripts]
+eap-api = "apps.api.main:main"
+eap-dashboard = "apps.dashboard.main:main"
+eap-scheduler = "apps.scheduler.app:main"
+eap-job-dq = "jobs.dq.job:run"
+eap-job-metrics = "jobs.metrics.__main__:main"
+eap-job-anomaly = "jobs.anomaly.job:run"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+  "eap",
+  "apps",
+  "apps.api",
+  "apps.api.routers",
+  "apps.dashboard",
+  "apps.scheduler",
+  "jobs",
+  "jobs.dq",
+  "jobs.metrics",
+  "jobs.anomaly",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["apps", "jobs"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
