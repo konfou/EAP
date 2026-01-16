@@ -15,14 +15,19 @@
   `pyproject.toml`. CI installs those explicitly.
 - Dependency definitions are duplicated across `pyproject.toml` and
   `flake.nix`. Evaluate extracting Python deps from the pyproject via
-  pyproject-nix or a similar template (ref: [1][2]).
+  pyproject-nix or a similar template (ref: [1],[2]).
 - Nix can also build/run Docker images. Worth exploring a unified build
   pipeline.
 - Taplo is recommended in AGENTS, exists in dev deps, but its usage
-  isn't enforced by pre-commit or CI pipeline. (Added due to [1].) Then
+  isn't enforced by pre-commit or CI pipeline. (Added due to [2].)  Then
   again only TOML currently in project is pyproject.
+    - The PyPI package is outdated and not officially affiliated, so
+      should eventually be removed from pyproject.
 - In similar vein, locally using `prettier` for Markdown files, and run
-  `yamllint` for CI.yml. Should perhaps integrate them formally as well.
+  `yamllint` for CI.yml. Should maybe integrate them formally as well.
+- Already using `ruff` and `ty` so even better maybe should go all in
+  oxidazion and integrate `uv` (by same devs as two previous tools) and
+  `prek` (`pre-commit` replacement with built-in TOML/YAML validators).
 - Jobs import the shared logger; keep Dockerfiles copying `eap/` when
   adding new services.
 - Test DB bootstraps `api_metrics` and `anomaly_rules` in fixtures; keep
