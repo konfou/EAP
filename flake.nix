@@ -16,6 +16,7 @@
           packages = with pkgs; [
             (python314.withPackages (
               ps: with ps; [
+                apscheduler
                 dash
                 fastapi
                 httpx
@@ -30,14 +31,17 @@
                 pytest-asyncio
                 pytest-cov
                 python-dateutil
-                ruff
+                ruff # native
                 sqlalchemy
                 structlog
-                taplo
-                ty
                 uvicorn
               ]
             ))
+            # in:pyproject but not-exposed-when-in:nixPythonPackages
+            pre-commit
+            taplo
+            ty
+            # rest
             postgresql_16
             curl
           ];
