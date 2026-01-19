@@ -30,7 +30,8 @@ def _fetch_overview_api(target_date: date, metrics: list[str]) -> dict[str, Any]
     dq_pass = bool(dq_data.get("pass", False))
 
     alerts_data = _fetch_json(f"{API_BASE_URL}/alerts/recent") or []
-    notifications_data = _fetch_json(f"{API_BASE_URL}/alerts/notifications") or []
+    notifications_data = _fetch_json(f"{API_BASE_URL}/alerts/notifications") or []  # noqa
+
     top_risks = [
         {
             "metric_name": row.get("metric_name"),
@@ -258,6 +259,7 @@ def _fetch_advanced_data_api(start_date: date, end_date: date) -> dict[str, Any]
     )
 
     alerts_data = _fetch_json(f"{API_BASE_URL}/alerts/recent") or []
+    notifications_data = _fetch_json(f"{API_BASE_URL}/alerts/notifications") or []
 
     metrics_table = []
     for metric_name in ["tx_fail_rate", "latency_p95_ms", "tx_completed_value", "dau"]:

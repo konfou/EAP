@@ -61,9 +61,7 @@ def _send_email(
         smtp.send_message(message)
 
 
-def _fetch_pending_alerts(
-    conn, channel: str, target: str, limit: int
-) -> list[dict]:
+def _fetch_pending_alerts(conn, channel: str, target: str, limit: int) -> list[dict]:
     return (
         conn.execute(
             text(
