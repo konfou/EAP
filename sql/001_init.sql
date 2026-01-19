@@ -108,6 +108,16 @@ CREATE TABLE IF NOT EXISTS alert_notifications (
   UNIQUE (alert_id, channel, target)
 );
 
+CREATE TABLE IF NOT EXISTS audit_log (
+  audit_id BIGSERIAL PRIMARY KEY,
+  ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  actor TEXT NOT NULL,
+  action TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+
 CREATE TABLE IF NOT EXISTS anomaly_rules (
   rule_name TEXT PRIMARY KEY,
   rule_version TEXT NOT NULL,
@@ -134,3 +144,4 @@ CREATE TABLE IF NOT EXISTS api_metrics (
 CREATE INDEX IF NOT EXISTS idx_alerts_ts ON alerts (ts DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts (status);
 CREATE INDEX IF NOT EXISTS idx_alert_notifications_alert ON alert_notifications (alert_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_ts ON audit_log (ts DESC);

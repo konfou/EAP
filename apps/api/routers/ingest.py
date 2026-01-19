@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
 from typing import Dict
 from ..db import get_db
 from ..schemas import IngestRequest, IngestResponse
 from ..crud import insert_event_raw, quarantine
+from ..audit import record_audit
 from ..auth import require_role
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
@@ -14,6 +15,7 @@ def ingest_events(
     req: IngestRequest,
     db: Session = Depends(get_db),
     _: str = Depends(require_role("operator")),
+    actor: str = Header(default="system", alias="X-Actor"),
 ) -> IngestResponse:
     accepted = 0
     rejected = 0
@@ -32,6 +34,18 @@ def ingest_events(
             with db.begin_nested():
                 quarantine(db, reason=reason, payload=event_json)
 
+    record_audit(
+        db,
+        action="ingest_events",
+        actor=actor,
+        entity_type="events_batch",
+        entity_id=None,
+        payload={
+            "accepted": accepted,
+            "rejected": rejected,
+            "rejected_reasons": reasons,
+        },
+    )
     db.commit()
     return IngestResponse(
         accepted=accepted, rejected=rejected, rejected_reasons=reasons

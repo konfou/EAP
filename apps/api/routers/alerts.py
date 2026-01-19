@@ -4,6 +4,7 @@ from sqlalchemy import text
 from ..db import get_db
 from ..schemas import AlertAction, AlertNotificationOut, AlertOut
 from ..auth import require_role
+from ..audit import record_audit
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
 
@@ -105,6 +106,14 @@ def acknowledge_alert(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert not found",
         )
+    record_audit(
+        db,
+        action="alert_ack",
+        actor=action.actor,
+        entity_type="alert",
+        entity_id=str(alert_id),
+        payload={"status": "ACK"},
+    )
     db.commit()
     return AlertOut(**row)
 
@@ -142,5 +151,13 @@ def resolve_alert(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Alert not found",
         )
+    record_audit(
+        db,
+        action="alert_resolve",
+        actor=action.actor,
+        entity_type="alert",
+        entity_id=str(alert_id),
+        payload={"status": "RESOLVED"},
+    )
     db.commit()
     return AlertOut(**row)

@@ -63,6 +63,21 @@ def prepare_db():
                 """
             )
         )
+        conn.execute(
+            text(
+                """
+                CREATE TABLE IF NOT EXISTS audit_log (
+                  audit_id BIGSERIAL PRIMARY KEY,
+                  ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                  actor TEXT NOT NULL,
+                  action TEXT NOT NULL,
+                  entity_type TEXT NOT NULL,
+                  entity_id TEXT,
+                  payload JSONB NOT NULL DEFAULT '{}'::jsonb
+                )
+                """
+            )
+        )
         config = {
             "ewma_lambda": 0.3,
             "ewma_limit": 3,
@@ -96,6 +111,7 @@ def prepare_db():
             "dq_reports",
             "alerts",
             "alert_notifications",
+            "audit_log",
             "api_metrics",
         ]:
             conn.execute(text(f"TRUNCATE {table} RESTART IDENTITY CASCADE"))
@@ -111,6 +127,7 @@ def clean_db():
             "dq_reports",
             "alerts",
             "alert_notifications",
+            "audit_log",
             "api_metrics",
         ]:
             conn.execute(text(f"TRUNCATE {table} RESTART IDENTITY CASCADE"))
