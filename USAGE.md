@@ -207,13 +207,28 @@ Example response:
 ]
 ```
 
-### 7. Tests
+### 7. Notifications
+
+Configure notification targets:
+
+```bash
+export ALERT_EMAIL_TO=ops@example.com
+export ALERT_WEBHOOK_URLS=https://hooks.example.com/alerts
+```
+
+Trigger routing:
+
+```bash
+eap-job-notify
+```
+
+### 8. Tests
 
 ```bash
 pytest -v
 ```
 
-### 8. CI
+### 9. CI
 
 CI runs unit/integration tests plus Docker builds via `.github/workflows/ci.yml`:
 

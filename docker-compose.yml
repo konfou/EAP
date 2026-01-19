@@ -45,6 +45,15 @@ services:
       dockerfile: Dockerfile.scheduler
     environment:
       DATABASE_URL: postgresql+psycopg://app:app@db:5432/risk
+      LOG_LEVEL: INFO
+      ALERT_EMAIL_FROM: alerts@eap.local
+      ALERT_EMAIL_TO: ""
+      ALERT_WEBHOOK_URLS: ""
+      SMTP_HOST: localhost
+      SMTP_PORT: 25
+      SMTP_USERNAME: ""
+      SMTP_PASSWORD: ""
+      SMTP_USE_TLS: "false"
     depends_on: [db]
 
 volumes:

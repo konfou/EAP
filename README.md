@@ -75,6 +75,7 @@ The system is built around five core principles:
   - Data Quality
   - Metrics
   - Anomaly Detection
+- Alert Routing: Email + webhook notifications
 - Metrics & Alerts API: Serves executive-ready outputs.
 - CI Pipeline: Automated testing with real database integration.
 
@@ -93,6 +94,7 @@ The system is built around five core principles:
 - Event-level idempotency and quarantine for invalid data.
 - Daily data quality scorecards with pass/fail controls.
 - Explainable anomaly detection (no black-box ML).
+- Alert routing via email/webhook with audit trails.
 - Quantified risk scoring framework.
 - Full test coverage for ingestion, controls, and APIs.
 - GitHub Actions CI with Postgres-backed integration tests.
