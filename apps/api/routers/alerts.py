@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from ..db import get_db
-from ..schemas import AlertAction, AlertOut
+from ..schemas import AlertAction, AlertNotificationOut, AlertOut
 from ..auth import require_role
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
@@ -12,6 +12,21 @@ ALERT_SELECT = """
            risk_score, message, context, status, acked_by, acked_at::text,
            resolved_by, resolved_at::text
     FROM alerts
+"""
+
+NOTIFICATION_SELECT = """
+    SELECT n.notification_id,
+           n.alert_id,
+           n.channel,
+           n.target,
+           n.status,
+           n.sent_at::text,
+           n.created_at::text,
+           n.last_error,
+           a.metric_name,
+           a.severity
+    FROM alert_notifications n
+    LEFT JOIN alerts a ON a.alert_id = n.alert_id
 """
 
 
@@ -35,6 +50,28 @@ def recent_alerts(
         .all()
     )
     return [AlertOut(**r) for r in rows]
+
+
+@router.get("/notifications", response_model=list[AlertNotificationOut])
+def recent_notifications(
+    limit: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+) -> list[AlertNotificationOut]:
+    rows = (
+        db.execute(
+            text(
+                NOTIFICATION_SELECT
+                + """
+        ORDER BY n.created_at DESC
+        LIMIT :limit
+        """
+            ),
+            {"limit": limit},
+        )
+        .mappings()
+        .all()
+    )
+    return [AlertNotificationOut(**r) for r in rows]
 
 
 @router.post("/{alert_id}/ack", response_model=AlertOut)

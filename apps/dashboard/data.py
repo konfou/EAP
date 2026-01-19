@@ -30,6 +30,7 @@ def _fetch_overview_api(target_date: date, metrics: list[str]) -> dict[str, Any]
     dq_pass = bool(dq_data.get("pass", False))
 
     alerts_data = _fetch_json(f"{API_BASE_URL}/alerts/recent") or []
+    notifications_data = _fetch_json(f"{API_BASE_URL}/alerts/notifications") or []
     top_risks = [
         {
             "metric_name": row.get("metric_name"),
@@ -280,6 +281,28 @@ def _fetch_advanced_data_api(start_date: date, end_date: date) -> dict[str, Any]
         }
         for row in alerts_data
     ]
+    notifications_table = [
+        {
+            "Channel": row.get("channel", ""),
+            "Target": row.get("target", ""),
+            "Status": row.get("status", ""),
+            "Alert": row.get("metric_name", ""),
+            "Severity": row.get("severity", ""),
+            "Sent At": row.get("sent_at") or row.get("created_at", ""),
+        }
+        for row in notifications_data
+    ]
+    if not notifications_table:
+        notifications_table = [
+            {
+                "Channel": "-",
+                "Target": "-",
+                "Status": "n/a",
+                "Alert": "No notifications",
+                "Severity": "",
+                "Sent At": "",
+            }
+        ]
 
     telemetry_table = [
         {
@@ -331,6 +354,7 @@ def _fetch_advanced_data_api(start_date: date, end_date: date) -> dict[str, Any]
         "dq_summary_text": dq_summary_text,
         "metrics_table": metrics_table,
         "alerts_table": alerts_table,
+        "notifications_table": notifications_table,
         "anomalies_table": anomalies_table,
         "telemetry_table": telemetry_table,
         "readiness_ok": readiness_ok,
@@ -438,6 +462,28 @@ def _fetch_advanced_data_sql(start_date: date, end_date: date) -> dict[str, Any]
             .all()
         )
 
+        notifications_window = (
+            conn.execute(
+                text(
+                    """
+                SELECT n.channel,
+                       n.target,
+                       n.status,
+                       n.sent_at::text AS sent_at,
+                       n.created_at::text AS created_at,
+                       a.metric_name,
+                       a.severity
+                FROM alert_notifications n
+                LEFT JOIN alerts a ON a.alert_id = n.alert_id
+                ORDER BY n.created_at DESC
+                LIMIT 10
+                """
+                )
+            )
+            .mappings()
+            .all()
+        )
+
     dq_summary = latest_dq["summary"] if latest_dq else {}
     dq_summary_text = (
         f"{latest_dq['report_date']} | pass={latest_dq['pass']} | "
@@ -480,6 +526,29 @@ def _fetch_advanced_data_sql(start_date: date, end_date: date) -> dict[str, Any]
             }
         ]
 
+    notifications_table = [
+        {
+            "Channel": row["channel"],
+            "Target": row["target"],
+            "Status": row["status"],
+            "Alert": row.get("metric_name") or "",
+            "Severity": row.get("severity") or "",
+            "Sent At": row.get("sent_at") or row.get("created_at") or "",
+        }
+        for row in notifications_window
+    ]
+    if not notifications_table:
+        notifications_table = [
+            {
+                "Channel": "-",
+                "Target": "-",
+                "Status": "n/a",
+                "Alert": "No notifications",
+                "Severity": "",
+                "Sent At": "",
+            }
+        ]
+
     telemetry_table = [
         {
             "Metric": "total_requests",
@@ -511,6 +580,7 @@ def _fetch_advanced_data_sql(start_date: date, end_date: date) -> dict[str, Any]
         "dq_summary_text": dq_summary_text,
         "metrics_table": metrics_table,
         "alerts_table": alerts_table,
+        "notifications_table": notifications_table,
         "anomalies_table": anomalies_table,
         "telemetry_table": telemetry_table,
         "readiness_ok": readiness_ok,

@@ -340,6 +340,31 @@ def build_layout() -> html.Div:
                                 },
                                 style_table={"overflowX": "auto"},
                             ),
+                            html.H3("Notification Routing"),
+                            dash_table.DataTable(
+                                id="notifications-table",
+                                data=advanced_data["notifications_table"],
+                                columns=[
+                                    {"name": "Channel", "id": "Channel"},
+                                    {"name": "Target", "id": "Target"},
+                                    {"name": "Status", "id": "Status"},
+                                    {"name": "Alert", "id": "Alert"},
+                                    {"name": "Severity", "id": "Severity"},
+                                    {"name": "Sent At", "id": "Sent At"},
+                                ],
+                                style_header={
+                                    "backgroundColor": "#f8fafc",
+                                    "fontWeight": "bold",
+                                    "color": "#0f172a",
+                                },
+                                style_cell={
+                                    "padding": "8px",
+                                    "fontFamily": "Arial",
+                                    "whiteSpace": "normal",
+                                    "height": "auto",
+                                },
+                                style_table={"overflowX": "auto"},
+                            ),
                             html.H3("Service Telemetry"),
                             dash_table.DataTable(
                                 id="telemetry-table",

@@ -73,3 +73,16 @@ class AlertOut(BaseModel):
 
 class AlertAction(BaseModel):
     actor: str
+
+
+class AlertNotificationOut(BaseModel):
+    notification_id: int
+    alert_id: int
+    channel: str
+    target: str
+    status: str
+    sent_at: Optional[str] = None
+    created_at: str
+    last_error: Optional[str] = None
+    metric_name: Optional[str] = None
+    severity: Optional[str] = None

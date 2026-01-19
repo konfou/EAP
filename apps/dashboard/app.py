@@ -20,6 +20,7 @@ server = app.server
     Output("dq-summary-text", "children"),
     Output("metrics-table", "data"),
     Output("alerts-table", "data"),
+    Output("notifications-table", "data"),
     Output("telemetry-table", "data"),
     Output("top-anomalies-table", "data"),
     Output("last-updated", "children"),
@@ -33,6 +34,7 @@ def update_advanced_panel(
     n_intervals: int, start_date: str, end_date: str
 ) -> tuple[
     list[html.Div],
+    list[dict[str, Any]],
     list[dict[str, Any]],
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -81,6 +83,7 @@ def update_advanced_panel(
                 "Timestamp": "",
             }
         ],
+        advanced["notifications_table"],
         telemetry_data,
         advanced["anomalies_table"],
         f"Last updated: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
