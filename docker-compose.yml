@@ -13,8 +13,8 @@ services:
   api:
     build: .
     environment:
-      DATABASE_URL: postgresql+psycopg://app:app@db:5432/risk
-      LOG_LEVEL: INFO
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://app:app@db:5432/risk}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports: ["8000:8000"]
     depends_on: [db]
     healthcheck:
@@ -28,9 +28,9 @@ services:
       context: .
       dockerfile: Dockerfile.dashboard
     environment:
-      DATABASE_URL: postgresql+psycopg://app:app@db:5432/risk
-      API_BASE_URL: http://api:8000
-      DASHBOARD_DATA_SOURCE: sql
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://app:app@db:5432/risk}
+      API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+      DASHBOARD_DATA_SOURCE: ${DASHBOARD_DATA_SOURCE:-sql}
     ports: ["8050:8050"]
     depends_on: [db]
     healthcheck:
@@ -44,16 +44,16 @@ services:
       context: .
       dockerfile: Dockerfile.scheduler
     environment:
-      DATABASE_URL: postgresql+psycopg://app:app@db:5432/risk
-      LOG_LEVEL: INFO
-      ALERT_EMAIL_FROM: alerts@eap.local
-      ALERT_EMAIL_TO: ""
-      ALERT_WEBHOOK_URLS: ""
-      SMTP_HOST: localhost
-      SMTP_PORT: 25
-      SMTP_USERNAME: ""
-      SMTP_PASSWORD: ""
-      SMTP_USE_TLS: "false"
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://app:app@db:5432/risk}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ALERT_EMAIL_FROM: ${ALERT_EMAIL_FROM:-alerts@eap.local}
+      ALERT_EMAIL_TO: ${ALERT_EMAIL_TO:-}
+      ALERT_WEBHOOK_URLS: ${ALERT_WEBHOOK_URLS:-}
+      SMTP_HOST: ${SMTP_HOST:-localhost}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-false}
     depends_on: [db]
 
 volumes:

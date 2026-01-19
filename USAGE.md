@@ -13,6 +13,9 @@ curl http://localhost:8000/health
 docker compose up --build
 ```
 
+Compose reads `.env` automatically; copy `.env.example` to `.env` for
+local overrides.
+
 To run scheduled jobs:
 
 ```bash
