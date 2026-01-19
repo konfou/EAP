@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import smtplib
+import urllib.request
 from email.message import EmailMessage
 from typing import Iterable
 
@@ -60,7 +61,9 @@ def _send_email(
         smtp.send_message(message)
 
 
-def _fetch_pending_email_alerts(conn, target: str, limit: int) -> list[dict]:
+def _fetch_pending_alerts(
+    conn, channel: str, target: str, limit: int
+) -> list[dict]:
     return (
         conn.execute(
             text(
@@ -76,7 +79,7 @@ def _fetch_pending_email_alerts(conn, target: str, limit: int) -> list[dict]:
             FROM alerts a
             LEFT JOIN alert_notifications n
               ON n.alert_id = a.alert_id
-             AND n.channel = 'email'
+             AND n.channel = :channel
              AND n.target = :target
              AND n.status = 'sent'
             WHERE n.notification_id IS NULL
@@ -84,7 +87,7 @@ def _fetch_pending_email_alerts(conn, target: str, limit: int) -> list[dict]:
             LIMIT :limit
             """
             ),
-            {"target": target, "limit": limit},
+            {"channel": channel, "target": target, "limit": limit},
         )
         .mappings()
         .all()
@@ -156,7 +159,7 @@ def send_email_notifications(limit: int = 50) -> int:
 
     sent = 0
     with engine.begin() as conn:
-        alerts = _fetch_pending_email_alerts(conn, target, limit)
+        alerts = _fetch_pending_alerts(conn, "email", target, limit)
         for alert in alerts:
             subject = (
                 f"[EAP] {alert['severity']} {alert['metric_name']} "
@@ -204,5 +207,66 @@ def send_email_notifications(limit: int = 50) -> int:
     return sent
 
 
+def _send_webhook(url: str, payload: dict) -> None:
+    data = json.dumps(payload).encode("utf-8")
+    request = urllib.request.Request(
+        url,
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=5) as response:
+        if response.status < 200 or response.status >= 300:
+            raise RuntimeError(f"webhook returned {response.status}")
+
+
+def send_webhook_notifications(limit: int = 50) -> int:
+    targets = _parse_recipients(os.getenv("ALERT_WEBHOOK_URLS"))
+    if not targets:
+        logger.info("webhook_notifications_skipped", reason="missing_targets")
+        return 0
+
+    sent = 0
+    with engine.begin() as conn:
+        for target in targets:
+            alerts = _fetch_pending_alerts(conn, "webhook", target, limit)
+            for alert in alerts:
+                payload = {
+                    "alert_id": alert["alert_id"],
+                    "metric_name": alert["metric_name"],
+                    "metric_date": alert["metric_date"],
+                    "severity": alert["severity"],
+                    "risk_score": alert["risk_score"],
+                    "message": alert["message"],
+                    "context": alert["context"],
+                    "timestamp": alert["ts"],
+                }
+                try:
+                    _send_webhook(target, payload)
+                    _record_notification(
+                        conn,
+                        alert_id=alert["alert_id"],
+                        channel="webhook",
+                        target=target,
+                        status="sent",
+                        payload=payload,
+                    )
+                    sent += 1
+                except Exception as error:
+                    logger.error("webhook_notification_failed", error=str(error))
+                    _record_notification(
+                        conn,
+                        alert_id=alert["alert_id"],
+                        channel="webhook",
+                        target=target,
+                        status="failed",
+                        payload=payload,
+                        error=str(error),
+                    )
+    logger.info("webhook_notifications_complete", sent=sent)
+    return sent
+
+
 def run() -> None:
     send_email_notifications()
+    send_webhook_notifications()
