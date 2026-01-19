@@ -45,6 +45,24 @@ def prepare_db():
                 """
             )
         )
+        conn.execute(
+            text(
+                """
+                CREATE TABLE IF NOT EXISTS alert_notifications (
+                  notification_id BIGSERIAL PRIMARY KEY,
+                  alert_id BIGINT NOT NULL REFERENCES alerts(alert_id) ON DELETE CASCADE,
+                  channel TEXT NOT NULL,
+                  target TEXT NOT NULL,
+                  status TEXT NOT NULL DEFAULT 'pending',
+                  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+                  last_error TEXT,
+                  sent_at TIMESTAMPTZ,
+                  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                  UNIQUE (alert_id, channel, target)
+                )
+                """
+            )
+        )
         config = {
             "ewma_lambda": 0.3,
             "ewma_limit": 3,
@@ -77,6 +95,7 @@ def prepare_db():
             "metrics_daily",
             "dq_reports",
             "alerts",
+            "alert_notifications",
             "api_metrics",
         ]:
             conn.execute(text(f"TRUNCATE {table} RESTART IDENTITY CASCADE"))
@@ -91,6 +110,7 @@ def clean_db():
             "metrics_daily",
             "dq_reports",
             "alerts",
+            "alert_notifications",
             "api_metrics",
         ]:
             conn.execute(text(f"TRUNCATE {table} RESTART IDENTITY CASCADE"))

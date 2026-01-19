@@ -95,6 +95,19 @@ CREATE TABLE IF NOT EXISTS alerts (
   resolved_at TIMESTAMPTZ
 );
 
+CREATE TABLE IF NOT EXISTS alert_notifications (
+  notification_id BIGSERIAL PRIMARY KEY,
+  alert_id BIGINT NOT NULL REFERENCES alerts(alert_id) ON DELETE CASCADE,
+  channel TEXT NOT NULL,
+  target TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+  last_error TEXT,
+  sent_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (alert_id, channel, target)
+);
+
 CREATE TABLE IF NOT EXISTS anomaly_rules (
   rule_name TEXT PRIMARY KEY,
   rule_version TEXT NOT NULL,
@@ -120,3 +133,4 @@ CREATE TABLE IF NOT EXISTS api_metrics (
 
 CREATE INDEX IF NOT EXISTS idx_alerts_ts ON alerts (ts DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts (status);
+CREATE INDEX IF NOT EXISTS idx_alert_notifications_alert ON alert_notifications (alert_id);
