@@ -5,6 +5,7 @@ from typing import Any
 
 import dash
 from dash import Input, Output, html
+from starlette.middleware.wsgi import WSGIMiddleware
 
 from .components import readiness_badge, source_badge
 from .data import fetch_advanced_data
@@ -14,6 +15,7 @@ from .layout import build_layout
 app = dash.Dash(__name__)
 app.layout = build_layout
 server = app.server
+asgi_app = WSGIMiddleware(server)
 
 
 @app.callback(

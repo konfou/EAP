@@ -7,4 +7,4 @@ RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 COPY apps/__init__.py /app/apps/__init__.py
 COPY apps/dashboard /app/apps/dashboard
 COPY eap /app/eap
-CMD ["uvicorn", "apps.dashboard.app:server", "--host", "0.0.0.0", "--port", "8050"]
+CMD ["uvicorn", "apps.dashboard.app:asgi_app", "--host", "0.0.0.0", "--port", "8050"]
