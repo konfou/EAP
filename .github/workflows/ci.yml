@@ -37,6 +37,9 @@ jobs:
           python-version: "3.14"
           cache: pip
 
+      - name: Configure env
+        run: cp .env.example .env
+
       - name: Install dependencies
         run: |
           python -m venv .venv
