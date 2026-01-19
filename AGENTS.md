@@ -16,7 +16,7 @@
 - `eap-job-dq` (or `python -m jobs.dq`): Runs data quality job once.
 - `eap-job-metrics --start YYYY-MM-DD --end YYYY-MM-DD` (or `python -m jobs.metrics --start YYYY-MM-DD --end YYYY-MM-DD`): Backfills metrics.
 - `eap-job-anomaly` (or `python -m jobs.anomaly`): Runs anomaly detection once.
-- `eap-job-notify` (or `python -m jobs.notifications`): Sends alert notifications.
+- `eap-job-notify` (or `python -m jobs.notify`): Sends alert notifications.
 - `pytest -v`: Runs the full test suite.
 - `ruff format --check .` and `ruff check .`: Format/lint checks.
 - `ty check`: Static type checking.

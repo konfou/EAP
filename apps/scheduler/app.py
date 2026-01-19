@@ -9,7 +9,7 @@ from eap.logging import configure_logging
 from jobs.anomaly.job import run as run_anomaly
 from jobs.metrics.job import run as run_metrics
 from jobs.dq.job import run as run_dq
-from jobs.notifications.job import run as run_notifications
+from jobs.notify.job import run as run_notifications
 
 logger = configure_logging(os.getenv("LOG_LEVEL", "INFO"))
 

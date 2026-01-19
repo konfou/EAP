@@ -1,6 +1,6 @@
 """Run notification routing job."""
 
-from jobs.notifications.job import run
+from jobs.notify.job import run
 
 if __name__ == "__main__":
     run()

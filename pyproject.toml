@@ -59,7 +59,7 @@ eap-scheduler = "apps.scheduler.app:main"
 eap-job-dq = "jobs.dq.job:run"
 eap-job-metrics = "jobs.metrics.__main__:main"
 eap-job-anomaly = "jobs.anomaly.job:run"
-eap-job-notify = "jobs.notifications.job:run"
+eap-job-notify = "jobs.notify.job:run"
 
 [build-system]
 requires = ["setuptools"]
@@ -77,7 +77,7 @@ packages = [
   "jobs.dq",
   "jobs.metrics",
   "jobs.anomaly",
-  "jobs.notifications",
+  "jobs.notify",
 ]
 
 [tool.coverage.run]
