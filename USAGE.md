@@ -14,7 +14,8 @@ docker compose up --build
 ```
 
 Compose reads `.env` automatically; copy `.env.example` to `.env` for
-local overrides.
+local overrides. Containers use `DATABASE_URL_DOCKER` to reach the
+compose network.
 
 To run scheduled jobs:
 
