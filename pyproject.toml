@@ -11,21 +11,21 @@ dependencies = [
   # API
   "fastapi",
   "uvicorn[standard]",
-  # Observability
-  "prometheus-client",
   # Dashboard
   "dash",
   # Scheduling
   "apscheduler",
+  # Observability
+  "prometheus-client",
   # Database
   "sqlalchemy",
   "psycopg[binary]",
-  # Data validation & settings
-  "pydantic",
-  "pydantic-settings",
   # Numerics & utilities
   "numpy",
   "python-dateutil",
+  # Data validation & settings
+  "pydantic",
+  "pydantic-settings",
   # Logging (stdlib-compatible)
   "structlog",
 ]
