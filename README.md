@@ -13,7 +13,7 @@ quantified risk scores suitable for executive and risk stakeholders.
 The system applies measurement theory and statistical controls to ensure
 accuracy and auditability rather than opaque "black-box" analytics.
 
-## Business Problem
+## Problem Statement
 
 Modern enterprises depend on event data (transactions, system
 performance, user activity) to make operational and financial decisions.
@@ -23,23 +23,6 @@ However:
 - Data quality failures introduce hidden risk.
 - Metric deviations are often detected too late.
 - Black-box models are difficult to audit.
-
-The platform addresses these gaps by applying a physics-influenced
-measurement mindset.
-
-## Measurement & Risk Philosophy (Physics Lens)
-
-Enterprise events are treated as measured signals rather than raw facts.
-Each signal carries uncertainty, drift, and latency just like physical
-instruments. Calibration checks, control charts, and confidence scoring
-ensure risk insights are grounded in measurement theory.
-
-## Validation & Controls
-
-Daily data quality reports quantify completeness, duplication, latency,
-schema drift, and source bias. These checks establish whether the
-measurement system is "in calibration" before downstream analytics are
-trusted.
 
 ## Solution Overview
 
@@ -113,8 +96,34 @@ The system is built around five core principles:
 - Seasonality and regime detection can be refined with richer models.
 - Extend controls to cover additional metrics and domain-specific KPIs.
 
+## Author Perspective
+
+This project applies a physics-inspired measurement mindset to deliver
+analytics that are trustworthy, explainable, and decision-oriented.
+
+### Measurement & Risk
+
+Enterprise events are treated as measured signals rather than raw facts.
+Each signal carries uncertainty, drift, and noise just like physical
+instruments. Calibration checks, control charts, and confidence scoring
+ensure risk insights are grounded in measurement theory.
+
+### Validation & Controls
+
+Daily data quality reports quantify completeness, duplication, latency,
+schema drift, and source bias. These checks establish whether the
+measurement system is "in calibration" before downstream analytics are
+trusted.
+
+## Adjacent Projects
+
+- [AAA] (Autonomous (Analytics) Action Agent): Expands on EAP's outputs
+  to drive automated investigations and response.
+
 ## Docs
 
 - See `USAGE.md` for development and workflow guide.
 - AI-assisted development is used on this project; see `AGENTS.md` for
   guidelines.
+
+[AAA]: https://github.com/konfou/AAA
