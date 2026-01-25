@@ -38,8 +38,7 @@
               ]
             ))
             # in:pyproject but not-exposed-when-in:nixPythonPackages
-            pre-commit
-            taplo
+            prek
             ty
             # rest
             postgresql_16

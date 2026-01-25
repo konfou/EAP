@@ -18,16 +18,12 @@
   pyproject-nix or a similar template (ref: [1],[2]).
 - Nix can also build/run Docker images. Worth exploring a unified build
   pipeline.
-- Taplo is recommended in AGENTS, exists in dev deps, but its usage
-  isn't enforced by pre-commit or CI pipeline. (Added due to [2].)  Then
-  again only TOML currently in project is pyproject.
-    - The PyPI package is outdated and not officially affiliated, so
-      should eventually be removed from pyproject.
+- Add a pre-push hook for `act` to run the CI pipeline locally (GitHub
+  Actions).
 - In similar vein, locally using `prettier` for Markdown files, and run
   `yamllint` for CI.yml. Should maybe integrate them formally as well.
-- Already using `ruff` and `ty` so even better maybe should go all in
-  oxidazion and integrate `uv` (by same devs as two previous tools) and
-  `prek` (`pre-commit` replacement with built-in TOML/YAML validators).
+- Already using `ruff`, `ty`, and `prek` so even better maybe should go
+  all in oxidazion and integrate `uv` (by same devs as two first tools).
 - Jobs import the shared logger; keep Dockerfiles copying `eap/` when
   adding new services.
 - Test DB bootstraps `api_metrics` and `anomaly_rules` in fixtures; keep

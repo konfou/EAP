@@ -40,11 +40,10 @@ dev = [
   # Formatting & linting
   "ruff",
   "ty",
-  "taplo",
   # Dependencies
   "pip-tools",
   # Local dev quality
-  "pre-commit",
+  "prek",
   "ipython",
 ]
 
