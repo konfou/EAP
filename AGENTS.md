@@ -5,7 +5,7 @@
 - `apps/dashboard/`: Dash-based executive dashboard (layout, data, app wiring).
 - `apps/scheduler/`: APScheduler-based job runner.
 - `jobs/`: Batch analytics modules (`jobs.dq`, `jobs.metrics`, `jobs.anomaly`).
-- `tests/`: Pytest suites organized into `tests/api`, `tests/jobs`, and `tests/dashboard`.
+- `tests/`: Pytest suites organized into `tests/api`, `tests/jobs`, `tests/dashboard`, and `tests/scheduler`.
 - `sql/`: Database schema initialization (append-only constraints, alert tables).
 
 ## Build, Test, and Development Commands
