@@ -120,6 +120,23 @@ def prepare_db():
 @pytest.fixture(autouse=True)
 def clean_db():
     with engine.begin() as conn:
+        conn.execute(
+            text(
+                """
+                CREATE TABLE IF NOT EXISTS events_raw (
+                  event_id UUID PRIMARY KEY,
+                  ts_event TIMESTAMPTZ NOT NULL,
+                  ts_ingested TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                  event_type TEXT NOT NULL,
+                  source_system TEXT NOT NULL,
+                  user_id TEXT,
+                  value DOUBLE PRECISION,
+                  measurement_uncertainty DOUBLE PRECISION,
+                  properties JSONB NOT NULL DEFAULT '{}'::jsonb
+                )
+                """
+            )
+        )
         for table in [
             "events_raw",
             "events_quarantine",
